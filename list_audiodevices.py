@@ -2,7 +2,7 @@ import pyo
 
 def list_audiodev():
 	devices = pyo.pa_get_output_devices()
-	#default_device = pyo.pa_get_default_output()
+	default_device = pyo.pa_get_default_output()
 
 	i = 0
 	print("ATTACHED AUDIO DEVICES:")
