@@ -2,48 +2,20 @@ from controller import *
 from pyo import *
 from time import sleep
 
-def rundsp(folder_l, folder_r):
+def rundsp(file_l, file_r):
     s = Server(sr=44100, nchnls=4, buffersize=512, duplex=1)
-    s.setInOutDevice(2)
+    s.setInOutDevice(9)
     s.boot()
 
-    tab = NewTable(4)
-    rec = TableRec(Input(), tab)
-
-
-    pit = Choice(choice=[0.1, 0.2], freq=[2])
-    #dur = Choice(choice=[.0625,.125,.125,.125,.25,.25,.5], freq=4)
-    dur = Choice(choice=[.125,.125,.2], freq=4)
-    a = Looper( table=tab, # table to loop in
-                    pitch=pit, # transposition
-                    start=0,
-                    #start=start, # loop start position
-                    dur=1,
-                    #dur=dur, # loop duration
-                    xfade=20, # crossfade duration in %
-                    mode=1, # looping mode
-                    xfadeshape=0, # crossfade shape
-                    startfromloop=False, # first start position, False means from beginning of the table
-                    interp=4, # interpolation method
-                    mul=1.3
-                    ).out(chnl=1)
-
-
-    snd_l = folder_l
+    snd_l = file_l
     sl = SfPlayer(snd_l)
-    sdl = SmoothDelay(sl, delay=0.2, feedback=0.5, crossfade=0.05, mul=0.5).out(chnl=1)
-    revl = WGVerb(sl, feedback=0.4, cutoff=5000, bal=.25, mul=.6).out(chnl=1)
+    sdl = SmoothDelay(sl.mix(4), delay=0.2, feedback=0.5, crossfade=0.05, mul=0.2).out(chnl=0, inc=2)
+    revl = WGVerb(sl.mix(4), feedback=0.4, cutoff=5000, bal=.25, mul=.2).out(chnl=0, inc=2)
 
-    snd_r = folder_r
+    snd_r = file_r
     sr = SfPlayer(snd_r)
-    sdr = SmoothDelay(sr, delay=0.2, feedback=0.5, crossfade=0.05, mul=0.5).out(chnl=1)
-    revr = WGVerb(sr, feedback=0.4, cutoff=5000, bal=.25, mul=.6).out(chnl=1)
-
-    #shoe state
-    trigger1 = 0
-    sdown1 = 0
-    trigger2 = 0
-    sdown2 = 0
+    sdr = SmoothDelay(sr.mix(4), delay=0.2, feedback=0.5, crossfade=0.05, mul=0.2).out(chnl=1, inc=2)
+    revr = WGVerb(sr.mix(), feedback=0.4, cutoff=5000, bal=.25, mul=.2).out(chnl=1, inc=2)
 
     #initialize serial reading
     rschuh = serial_init(0)
@@ -55,8 +27,13 @@ def rundsp(folder_l, folder_r):
 
     #initialize digital reading
     switch = read_digital(2)
-    sleep(0.5)
-    x = 1
+    sleep(1)
+
+    #initial shoe state
+    trigger1 = 0
+    sdown1 = 0
+    trigger2 = 0
+    sdown2 = 0
 
     while True:
         switch = read_digital(2)
@@ -64,16 +41,11 @@ def rundsp(folder_l, folder_r):
             s.start()
         while switch is True:
             #Read all Sensors:
-            sleep(0.1)
-            #x += 1
-            #if x == 20:
-                #rec.play()
-                #x = 1
-                #print("loop")
+            sleep(0.02)
             switch = read_digital(2)
             sdown1 = 0
             sdown2 = 0
-            lschuh = read_shoe(1, 20)
+            lschuh = read_shoe(1, 40)
             rschuh = read_shoe(0, 40)
             poti1 = read_poti(2, 5)
             poti2 = read_poti(3, 5)
@@ -92,18 +64,17 @@ def rundsp(folder_l, folder_r):
             if((lschuh == 1) and (trigger2 == 0)):
                 trigger2 = 1
                 sdown2 = 1
-                if sdown2 == 1:
-                    sl.play()
-                elif((lschuh == 0) and (trigger2 == 1)):
-                    trigger2 = 0
+            if sdown2 == 1:
+                sl.play()
+            elif((lschuh == 0) and (trigger2 == 1)):
+                trigger2 = 0
             #Trigger rechter SCHUH
             if((rschuh == 1) and (trigger1 == 0)):
                 trigger1 = 1
                 sdown1 = 1
-                if sdown1 == 1:
-                    sr.play()
-                    #rec.play()
-                elif((rschuh == 0) and (trigger1 == 1)):
-                    trigger1 = 0
+            if sdown1 == 1:
+                sr.play()
+            elif ((rschuh == 0) and (trigger1 == 1)):
+                trigger1 = 0
         if switch is False:
             s.stop()
