@@ -2,8 +2,8 @@ from pyo import *
 from controller import *
 from time import sleep
 
-
-s = Server()
+s = Server(sr=44100, nchnls=4, buffersize=512, duplex=1)
+s.setInOutDevice(2)
 s.boot()
 
 

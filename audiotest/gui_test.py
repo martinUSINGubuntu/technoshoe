@@ -1,5 +1,4 @@
 from pyo import *
-from controller import *
 from time import sleep
 
 
