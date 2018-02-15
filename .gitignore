@@ -1084,3 +1084,5 @@ Samples/TechnoDrum/FX_SingleHits/White_Noize.wav
 Samples/TechnoDrum/FX_SingleHits/Winer_Stab.wav
 Samples/TechnoDrum/FX_SingleHits/woopwoopwoop.wav
 Samples/TechnoDrum/FX_SingleHits/Wzzzap.wav
+.vscode/settings.json
+__pycache__/

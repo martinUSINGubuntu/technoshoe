@@ -4,18 +4,18 @@ from time import sleep
 
 def rundsp(file_l, file_r):
     s = Server(sr=44100, nchnls=4, buffersize=512, duplex=1)
-    s.setInOutDevice(9)
+    s.setInOutDevice(2)
     s.boot()
 
     snd_l = file_l
     sl = SfPlayer(snd_l)
-    sdl = SmoothDelay(sl.mix(4), delay=0.2, feedback=0.5, crossfade=0.05, mul=0.2).out(chnl=0, inc=2)
-    revl = WGVerb(sl.mix(4), feedback=0.4, cutoff=5000, bal=.25, mul=.2).out(chnl=0, inc=2)
+    sdl = SmoothDelay(sl, delay=0.2, feedback=0.5, crossfade=0.05, mul=0.2).out(chnl=0, inc=2)
+    revl = WGVerb(sl, feedback=0.4, cutoff=5000, bal=.25, mul=.2).out(chnl=0, inc=2)
 
     snd_r = file_r
     sr = SfPlayer(snd_r)
-    sdr = SmoothDelay(sr.mix(4), delay=0.2, feedback=0.5, crossfade=0.05, mul=0.2).out(chnl=1, inc=2)
-    revr = WGVerb(sr.mix(), feedback=0.4, cutoff=5000, bal=.25, mul=.2).out(chnl=1, inc=2)
+    sdr = SmoothDelay(sr, delay=0.2, feedback=0.5, crossfade=0.05, mul=0.2).out(chnl=1, inc=2)
+    revr = WGVerb(sr, feedback=0.4, cutoff=5000, bal=.25, mul=.2).out(chnl=1, inc=2)
 
     #initialize serial reading
     rschuh = serial_init(0)
