@@ -7,14 +7,11 @@ s = Server()
 s.boot()
 
 
-#a = SfPlayer('./Samples/test.aiff', speed=1, loop=True)
-#sin2 = SfPlayer('./Samples/test2.aiff', speed=1, loop=True)
 a = Sine(440, 0, 0.1).out()
-sin2 = Sine(440, 0, 0.1).out()
+b = Sine(440, 0, 0.1).out()
 d1 = Delay(a, delay=0.0, feedback=0.0, mul=.4).out()
-d2 = Delay(sin2, delay=0.0, feedback=0.0, mul=.4).out()
+d2 = Delay(b, delay=0.0, feedback=0.0, mul=.4).out()
 
-#s.start()
 
 #initialize serial reading
 rschuh = serial_init(0)
@@ -33,7 +30,6 @@ print(switch)
 while True:
     switch = read_digital(2)
     if switch is True:
-        #s.gui(locals())
         s.start()
         while switch is True:
             switch = read_digital(2)
@@ -43,14 +39,11 @@ while True:
             poti4 = read_poti(5, 5)
             freq1 = poti1* 5 + 300
             freq2 = poti2* 5 + 300
-            #speed = float(poti1) / 100
             a.setFreq(freq1)
-            #speed2 = float(poti2) / 100
-            sin2.setFreq(freq2)
+            b.setFreq(freq2)
             _feedback_poti3 = float(poti3) / 100
             _feedback_poti4 = float(poti4) / 100
             d1.setDelay(_feedback_poti3)
             d2.setFeedback(_feedback_poti4)
     if switch is False:
         s.stop()
-
