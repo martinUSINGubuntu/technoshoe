@@ -2,7 +2,7 @@ from pyo import *
 from time import sleep
 
 s = Server(sr=44100, nchnls=4, buffersize=512, duplex=1)
-s.setInOutDevice(2)
+s.setInOutDevice(3)
 s.boot()
 
 s.start()
