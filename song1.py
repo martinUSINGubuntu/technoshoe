@@ -2,12 +2,19 @@ from system.controller import *
 from time import sleep
 from random import random
 from pyo import *
+import os
 
 
 def rundsp2(file_l, file_r):
     s = Server(sr=44100, nchnls=4, buffersize=512, duplex=1)
     s.setInOutDevice(2)
     s.boot()
+
+    # Path of the recorded sound file.
+    path = os.path.join(os.path.expanduser("~"), "Desktop", "synth.wav")
+    # Record for 10 seconds a 24-bit wav file.
+    s.recordOptions(dur=-1, filename=path, fileformat=0, sampletype=1)
+
 
     #Guitar
     g = Input(chnl=0)
@@ -61,6 +68,8 @@ def rundsp2(file_l, file_r):
         switch = read_digital(2)
         if switch is True:
             s.start()
+            #Record Performance:
+            s.recstart()
         while switch is True:
             #Read all Sensors:
             #sleep(0.05)
@@ -101,6 +110,8 @@ def rundsp2(file_l, file_r):
             elif ((rschuh == 0) and (trigger1 == 1)):
                 trigger1 = 0
         if switch is False:
+            s.recstop()
             s.stop()
+
 
 rundsp2("./Samples/beat.wav", "./Samples/Mello.wav")
